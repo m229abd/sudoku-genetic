@@ -38,7 +38,7 @@ def initial_pop(size:int, population:int) -> np.ndarray:
     return ((np.random.random(size = (population, size))*8.9)+1).astype(int)
 
 def mutation(offspring:np.ndarray, ga_instance: pygad.GA):
-    offspring[random.randint(0,len(offspring))] += 1
+    offspring[random.randint(0,len(offspring)-1)] += 1
     return offspring
 
 class AI:
@@ -56,21 +56,25 @@ class AI:
         # ^^^ DO NOT change the problem_data above ***
 
         table = np.asarray(problem_data["sudoku"])
+        # Find empty cells:
         locations = np.argwhere(table == 0)
         fitness_wrapper = lambda values, solution_idx: fitness(put_in_table(values=values,table=table,locations=locations))
-        ga_instance = pygad.GA(num_generations=500,
-        initial_population=initial_pop(len(locations),100),
-        num_parents_mating=94,
-        fitness_func=fitness_wrapper,
-        crossover_type="uniform",
-        mutation_probability=1.0,
-        mutation_type=mutation,
-        keep_elitism = 6,
-        parent_selection_type="rank",
-        stop_criteria = ["reach_0", "saturate_10"]
-        )
-        ga_instance.run()
-        ans = ga_instance.best_solution()[0].astype(int)
-        finished = put_in_table(values=ans,table=table,locations=locations)
+        saturatation = 1
+        # Reset if we are stuck in a local optima
+        while(saturatation > 0):
+            ga_instance = pygad.GA(num_generations=500,
+            initial_population=initial_pop(len(locations),100),
+            num_parents_mating=94,
+            fitness_func=fitness_wrapper,
+            crossover_type="uniform",       #Uniform keeps the diversity high
+            mutation_probability=1.0,       #Mutation keeps the diversity high
+            mutation_type=mutation,
+            keep_elitism = 6,               #Keep the good parents
+            parent_selection_type="rank",   #Ranking is computationaly expensive and slow converging but helps with local minimums.
+            stop_criteria = ["reach_0", "saturate_10"]
+            )
+            ga_instance.run()
+            ans, saturatation, _ = ga_instance.best_solution()
         # finished is the solved version
+        finished = put_in_table(values=ans.astype(int),table=table,locations=locations)
         return finished
