@@ -56,8 +56,8 @@ class AI:
         # ^^^ DO NOT change the problem_data above ***
 
         table = np.asarray(problem_data["sudoku"])
-        locations = table[table==0]
-        fitness_wrapper = lambda values: fitness(put_in_table(values=values,table=table,locations=locations))
+        locations = np.argwhere(table == 0)
+        fitness_wrapper = lambda values, solution_idx: fitness(put_in_table(values=values,table=table,locations=locations))
         ga_instance = pygad.GA(num_generations=500,
         initial_population=initial_pop(len(locations),100),
         num_parents_mating=94,
@@ -70,7 +70,7 @@ class AI:
         stop_criteria = ["reach_0", "saturate_10"]
         )
         ga_instance.run()
-        finished = ga_instance.best_solution()
-
+        ans = ga_instance.best_solution()[0].astype(int)
+        finished = put_in_table(values=ans,table=table,locations=locations)
         # finished is the solved version
         return finished
