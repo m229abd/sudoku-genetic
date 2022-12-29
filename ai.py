@@ -32,6 +32,9 @@ def fitness(table:np.ndarray) -> int:
                 fitness -= 1
     return fitness
 
+def initial_pop(size:int, population:int) -> np.ndarray:
+    return ((np.random.random(size = (population, size))*8.9)+1).astype(int)
+
 class AI:
     # ^^^ DO NOT change the name of the class ***
 
