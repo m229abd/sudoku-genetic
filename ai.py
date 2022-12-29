@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import random
 
 # *** you can change everything except the name of the class, the act function and the problem_data ***
 
@@ -34,6 +35,10 @@ def fitness(table:np.ndarray) -> int:
 
 def initial_pop(size:int, population:int) -> np.ndarray:
     return ((np.random.random(size = (population, size))*8.9)+1).astype(int)
+
+def mutation(offspring:np.ndarray):
+    offspring[random.randint(0,len(offspring))] += 1
+    return offspring
 
 class AI:
     # ^^^ DO NOT change the name of the class ***
