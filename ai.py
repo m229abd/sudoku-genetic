@@ -71,7 +71,7 @@ class AI:
             mutation_type=mutation,
             keep_elitism = 6,               #Keep the good parents
             parent_selection_type="rank",   #Ranking is computationaly expensive and slow converging but helps with local minimums.
-            stop_criteria = ["reach_0", "saturate_10"]
+            stop_criteria = ["reach_0", "saturate_15"]
             )
             ga_instance.run()
             ans, saturatation, _ = ga_instance.best_solution()
